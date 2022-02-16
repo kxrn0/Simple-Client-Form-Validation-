@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+    <title>Form validation</title>
+    <style>
+        *,
+        *::before,
+        *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: inherit;
+            font-size: 100%;
+        }
+
+        @font-face {
+            font-family: yano;
+            src: url("fonts/squirrel/yanonekaffeesatz-variablefont_wght-webfont.woff") format("woff");
+            src: url("fonts/squirrel/yanonekaffeesatz-variablefont_wght-webfont.woff2") format("woff2");
+        }
+
+        body {
+            background: azure;
+            font-family: yano
+        }
+
+        form {
+            width: 500px;
+            background: aqua;
+            margin: 100px auto;
+            padding: 1em;
+            border-radius: 5px;
+            box-shadow: 0 3px 10px 3px rgb(135, 182, 176);
+        }
+
+        li {
+            position: relative;
+        }
+
+        form ul {
+            list-style: none;
+        }
+
+        form h2 {
+            font-size: 40px;
+            margin-bottom: 1em;
+        }
+
+        form li {
+            width: 90%;
+            margin-top: .5em;
+            display: flex;
+            justify-content: space-between;
+            gap: 1em;
+            font-size: 25px;
+        }
+
+        input {
+            width: 60%;
+            padding: 5px;
+        }
+
+        textarea {
+            width: 70%;
+            padding: 5px;
+            resize: vertical;
+        }
+
+        form button {
+            background: deepskyblue;
+            padding: 7px 15px;
+            border: none;
+            border-radius: 3px;
+            font-weight: bold;
+        }
+
+        form button:hover {
+            background: rgb(4, 169, 245);
+        }
+
+        form button:active {
+            background: rgb(5, 126, 238);
+            transform: scale(.97);
+        }
+
+        .error {
+            position: absolute;
+        }
+
+        .phone-tip {
+            width: 20px;
+            height: 20px;
+            background: rgb(196, 219, 240);
+            position: absolute;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 50%;
+            font-size: 15px;
+            font-family: 'Courier New', Courier, monospace;
+            top: 10px;
+            right: 10px;
+            user-select: none;
+        }
+
+        .phone-tip::after {
+            width: 200px;
+            background: rgb(167, 202, 241);
+            content: "You can use spaces, dots (.), and dashes (-) to separate the numbers.";
+            font-size: 10px;
+            position: absolute;
+            right: -200px;
+            border-radius: 4px;
+            transform: scale(0);
+        }
+
+        .phone-tip:hover::after {
+            transform: scale(1);
+        }
+
+        input:invalid,
+        textarea:invalid {
+            background: rgb(250, 246, 246);
+            border: 3px solid red;
+        }
+
+        input:valid,
+        textarea:valid {
+            background: azure;
+        }
+    </style>
+</head>
+
+<body>
+    <form action="https://httpbin.org/post" method="post">
+        <h2>Enter your support query</h2>
+        <ul>
+            <li>
+                <label for="uname">User name :</label>
+                <input type="text" name="uname" id="uname" required minlength="5" maxlength="20"
+                    pattern="\w\.[a-z0-9]{3,}" placeholder="ex : s.kxrp">
+            </li>
+            <li id="li-email">
+                <label for="email">Email address :</label>
+                <input type="email" name="email" id="email" required minlength="10" pattern="[0-9a-zA-Z]+@bigcorp.eu"
+                    placeholder="ex : kxrn0@bigcorp.eu">
+                <span class="error"></span>
+            </li>
+            <li>
+                <label for="phone">Phone number :</label>
+                <input type="tel" name="phone" id="phone" required pattern="\d{3}[\s\-.]?\d{3}[\s\-.]?\d{4}"
+                    placeholder="ex : 543-123-8967">
+                <span class="phone-tip">!</span>
+            </li>
+            <li>
+                <label for="comment">Comment :</label>
+                <textarea name="comment" id="comment" rows="5" required maxlength="200"></textarea>
+            </li>
+            <li>
+                <button>Submit comment</button>
+            </li>
+        </ul>
+    </form>
+
+    <script>
+        const telephone = document.getElementById("phone");
+        const email = document.getElementById("email");
+
+        telephone.addEventListener("input", () => {
+            let reg;
+
+            reg = /[^0-9\-.\s]/g;
+            if (telephone.value)
+                telephone.value = telephone.value.replace(reg, '');
+
+        });
+
+        email.addEventListener("input", () => {
+            let domail, index;
+
+            if (email.validity.typeMismatch) {
+                email.setCustomValidity("Please enter a valid email");
+                return;
+            }
+
+            index = email.value.indexOf('@');
+            domail = email.value.substring(index + 1, email.value.length);
+
+            if (domail != "bigcorp.eu")
+                email.setCustomValidity("Your email should end in @bigcorp.eu");
+            else
+                email.setCustomValidity('');
+        });
+    </script>
+</body>
+
+</html>
